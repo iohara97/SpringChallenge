@@ -1,7 +1,4 @@
 package com.br.meli.springchallenge.Controller;
-
-
-<<<<<<< HEAD
 import com.br.meli.springchallenge.Database.Database;
 import com.br.meli.springchallenge.Service.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +34,7 @@ public class ProdutoController {
     }*/
 
     @PostMapping("/insert-articles-request")
-    public ResponseEntity<List<ProdutoDTO>> postProduct(@RequestBody List<Produto> produtos, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<List<ProdutoDTO>> postProduct(@RequestBody List<Produto> produtos) {
         List<ProdutoDTO> produtosDTO = produtoService.cadastrar(produtos);
         return ResponseEntity.status(HttpStatus.CREATED).body(produtosDTO);
     }
