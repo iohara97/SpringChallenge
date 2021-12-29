@@ -1,4 +1,4 @@
-package com.br.meli.springchallenge;
+package com.br.meli.springchallenge.Database;
 
 import java.sql.*;
 
