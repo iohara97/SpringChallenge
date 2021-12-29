@@ -1,0 +1,48 @@
+// PRODUTOS //
+
+CREATE TABLE IF NOT EXISTS produto (
+	productId  INTEGER PRIMARY KEY AUTOINCREMENT,
+	name VARCHAR(30) NOT NULL,
+	category VARCHAR(30) NOT NULL,
+	brand VARCHAR(30) NOT NULL,
+	price DOUBLE NOT NULL,
+	quantity INTEGER NOT NULL,
+	free_shipping BOOLEAN NOT NULL,
+	prestige VARCHAR(10) NOT NULL
+)
+
+
+//  //
+
+INSERT INTO produto (name, category, brand, price, quantity, free_shipping, prestige) VALUES (
+    "Serra de Bancada",
+    "Ferramentas",
+    "FORTGPRO",
+    1800,
+    5,
+    true,
+    "****"
+)
+
+
+INSERT INTO produto (name, category, brand, price, quantity, free_shipping, prestige) VALUES (
+    "Furadeira",
+    "Ferramentas",
+    "Black & Decker",
+    500,
+    7,
+    True,
+    "****"
+)
+
+INSERT INTO produto (name, category, brand, price, quantity, free_shipping, prestige) VALUES
+    ("Soldadora", "Ferramentas", "Black & Decker", 350, 10, True, "***"),
+    ("Chuteira", "Esportes", "Adidas", 235,	6, True, "*****")
+    ("Mini Cama elastica", "Esportes", "Starboard", 183, 4, True, "*****"),
+    ("Camiseta", "Esportes", "Topper", 80, 2, False, "***"),
+    ("Redmi Note 9", "Celulares", "Xiaomi", 2.800, 15, True, "****"),
+    ("Smartwatch", "Celulares" , "Noga", 1200, 20, False, "**"),
+    ("Camisa", "Roupas" , "Fila", 79, 2, False, "***"),
+    ("Calcas", "Roupas" , "Oakley", 73, 6, False, "***"),
+    ("Meias", "Roupas" , "Gonew", 10, 8, False, "*"),
+    ("Shorts", "Roupas" , "Lacoste", 275, 9, True, "***")
