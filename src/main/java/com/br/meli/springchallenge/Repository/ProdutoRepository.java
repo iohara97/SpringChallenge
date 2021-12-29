@@ -15,29 +15,9 @@ public class ProdutoRepository {
 
 
 
-    public void salvar(List<Produto> produtos) {
-
-        String query = "INSERT INTO produto (name, category, brand, price, quantity, free_shipping, prestige) VALUES ";
-//            String subquery = "";
-        for (Produto elem:produtos) {
-
-            String subquery = " ('" + elem.getName() + "', " +
-                            "'" + elem.getCategory() + "', " +
-                            "'" + elem.getBrand() + "', " +
-                            elem.getPrice().toString() + ", " +
-                            elem.getQuantity() + ", " +
-                            elem.getFreeShipping().toString() + ", " +
-                            "'"+ elem.getPrestige() + "'),";
-
-            query += subquery;
-        }
-
-        // Retirando o último caracter
-        StringBuilder sb = new StringBuilder(query);
-        sb.deleteCharAt(query.length() - 1);
-
-//        System.out.println(sb.toString());
-
-        database.customQuery(sb.toString());
+    public List<Produto> salvar(List<Produto> produtos) {
+        List<Produto> produtosA = database.insertProduto(produtos);
+        return produtosA;
     }
+
 }
