@@ -2,6 +2,8 @@ package com.br.meli.springchallenge.Controller;
 
 
 import com.br.meli.springchallenge.Database.Database;
+import com.br.meli.springchallenge.Service.ProdutoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +20,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("api/v1")
 public class ProdutoController {
 
     /*private static final String template = "Hello, %s!";
@@ -30,9 +32,16 @@ public class ProdutoController {
         return ResponseEntity.ok("CONECTOU!");
 
     }*/
+    @Autowired
+    ProdutoService produtoService;
+
+    @GetMapping
+    public String okay() {
+        return "okay";
+    }
 
     @PostMapping("/insert-articles-request")
-    public ResponseEntity<List<ProdutoDTO>> postProduct(List<Produto> produtos, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<List<ProdutoDTO>> postProduct(@RequestBody List<Produto> produtos, UriComponentsBuilder uriBuilder) {
         List<ProdutoDTO> produtosDTO = produtoService.cadastrar(produtos);
         return ResponseEntity.status(HttpStatus.CREATED).body(produtosDTO);
     }
