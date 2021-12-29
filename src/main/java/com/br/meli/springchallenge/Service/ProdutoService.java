@@ -14,11 +14,15 @@ public class ProdutoService {
     @Autowired
     ProdutoRepository produtoRepository;
 
-
     public List<ProdutoDTO> cadastrar(List<Produto> produtos) {
-
-        produtoRepository.salvar(produtos);
-
-        return null;
+        try {
+            produtoRepository.salvar(produtos);
+            return ProdutoDTO.converte(produtos);
+        } catch(Exception e) {
+            System.out.println("Error = "
+                    + e.getMessage());
+            ProdutoDTO produtoDTO = new ProdutoDTO();
+            return (List<ProdutoDTO>) produtoDTO;
+        }
     }
 }

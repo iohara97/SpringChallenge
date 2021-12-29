@@ -11,5 +11,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Pedido {
     private String name;
+<<<<<<< HEAD
 
+=======
+>>>>>>> iohara
 }
