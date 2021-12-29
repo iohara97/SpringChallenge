@@ -16,8 +16,8 @@ public class ProdutoService {
 
     public List<ProdutoDTO> cadastrar(List<Produto> produtos) {
         try {
-            produtoRepository.salvar(produtos);
-            return ProdutoDTO.converte(produtos);
+            List<Produto> produtosA = produtoRepository.salvar(produtos);
+            return ProdutoDTO.converte(produtosA);
         } catch(Exception e) {
             System.out.println("Error = "
                     + e.getMessage());
@@ -25,4 +25,7 @@ public class ProdutoService {
             return (List<ProdutoDTO>) produtoDTO;
         }
     }
+
+
+
 }

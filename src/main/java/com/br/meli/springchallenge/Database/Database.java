@@ -164,4 +164,73 @@ public class Database {
 //        connect();
 //    }
 
+    public List<Produto> insertProduto(List<Produto> produtos) {
+        try {
+            Connection cn = connect();
+
+            String query = "INSERT INTO produto (name, category, brand, price, quantity, free_shipping, prestige) VALUES ";
+//            String subquery = "";
+            for (Produto elem:produtos) {
+
+                String subquery = " ('" + elem.getName() + "', " +
+                        "'" + elem.getCategory() + "', " +
+                        "'" + elem.getBrand() + "', " +
+                        elem.getPrice().toString() + ", " +
+                        elem.getQuantity() + ", " +
+                        elem.getFreeShipping().toString() + ", " +
+                        "'"+ elem.getPrestige() + "'),";
+
+                query += subquery;
+            }
+
+            // Retirando o último caracter
+            StringBuilder sb = new StringBuilder(query);
+            sb.deleteCharAt(query.length() - 1);
+
+//        System.out.println(sb.toString());
+
+            sb.append(" RETURNING *");
+            String query1 = sb.toString();
+            // lendo os registros
+            //Statement statement = cn.createStatement();
+
+            Statement statement = cn.createStatement();
+
+
+            // tentar implementar a parametrização da query
+//            PreparedStatement stmt = cn.prepareStatement("Select * from produtos where produtId = ?");
+//            stmt.setInt(1, 4);
+
+            // ResultSet resultSet = statement.executeQuery(query1);
+
+            PreparedStatement stmt = cn.prepareStatement(query1);
+
+            ResultSet resultSet = stmt.executeQuery(); //executeQuery();
+
+            List<Produto> produtosA = new ArrayList<Produto>();
+
+            while (resultSet.next()) {
+                // Tentando fazer o cast da linha para o objeto Produto
+//                Produto produto = (Produto) resultSet.getRow();
+
+                Produto produto = new Produto(
+                        resultSet.getLong("productId"),
+                        resultSet.getString("name"),
+                        resultSet.getString("category"),
+                        resultSet.getString("brand"),
+                        resultSet.getBigDecimal("price"),
+                        resultSet.getInt("quantity"),
+                        resultSet.getBoolean("free_shipping"),
+                        resultSet.getString("prestige")
+                );
+                produtosA.add(produto);
+            }
+
+            return produtosA;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
 }
