@@ -1,5 +1,6 @@
 package com.br.meli.springchallenge.Controller;
 import com.br.meli.springchallenge.Database.Database;
+import com.br.meli.springchallenge.Entity.Pedido;
 import com.br.meli.springchallenge.Service.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -68,7 +69,9 @@ public class ProdutoController {
         }
 
         List<Produto> produtos = produtoService.pesquisaPorFiltros(filtros);
+        if(produtos.size() < 1) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
         return ResponseEntity.status(HttpStatus.OK).body(produtos);
     }
-
 }

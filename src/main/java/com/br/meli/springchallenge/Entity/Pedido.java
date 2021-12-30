@@ -15,14 +15,18 @@ import java.util.List;
 public class Pedido {
     private long id;
     private List<Produto> produtos;
-    private double total;
+    private BigDecimal total;
 
-    public double calculaTotal(){
-        double pTotal= 0;
+    public void calculaTotal(){
+        BigDecimal tempTotal = BigDecimal.ZERO; // -> valor inicial zero
+        for(Produto p: this.getProdutos()){
+            BigDecimal qtd = new BigDecimal(p.getQuantity());
+            BigDecimal currentValue = p.getPrice();
 
-        for (Produto p:produtos){
-            pTotal += p.getTotal();
+            currentValue = currentValue.multiply(qtd);
+            tempTotal = tempTotal.add(currentValue);
+
         }
-        return pTotal;
+        this.setTotal(tempTotal);
     }
 }

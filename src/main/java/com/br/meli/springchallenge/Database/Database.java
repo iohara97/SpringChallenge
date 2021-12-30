@@ -1,8 +1,10 @@
 package com.br.meli.springchallenge.Database;
 
+import com.br.meli.springchallenge.Entity.Pedido;
 import com.br.meli.springchallenge.Entity.Produto;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +13,8 @@ import java.util.Map;
 
 @Component
 public class Database {
+
+    List<Pedido> pedidos = new ArrayList<>();
 
     private Connection connect() {
         try {
@@ -27,10 +31,14 @@ public class Database {
     }
 
     public List<Produto> getAllProdutosByCategory(String category) {
-        return queryProduto("select * from produto where category = '" + category + "'");
+        return queryProduto("select * from produto where category = " + category);
     }
 
+    // resolvendo conflito
+    //public List<Produto> getAllProdutosId(String ids) {
+    //    return queryProduto("select * from produto where productId in (" + ids + ")");
     // Revisar
+
     public List<Produto> getAllProdutosByFilters(HashMap<String, String> filters) {
 
         String sqlQuery = "select * from produto where "; // category = '\" + category + \"'\"";
@@ -40,7 +48,12 @@ public class Database {
             String key = entry.getKey();
             String value = entry.getValue();
 
-            if (!key.equals("order")) {
+            if (key.equals("price")) {
+                sqlQuery += key + " = " + value + " and ";
+            } else if(key.equals("freeShipping")){
+                int parsedValue = value.equalsIgnoreCase("true") ? 1 : 0;
+                sqlQuery += " free_shipping =  " + parsedValue + " AND ";
+            } else if(!key.equals("order")){
                 sqlQuery += key + " LIKE '" + value + "' and ";
             }
         }
@@ -117,6 +130,7 @@ public class Database {
                 produtos.add(produto);
             }
 
+            cn.close();
             return produtos;
 
         } catch (SQLException e) {
@@ -136,6 +150,7 @@ public class Database {
             stmt.execute(); //executeQuery();
 
             System.out.println("Query executada com sucesso em customQuery()");
+            cn.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -191,6 +206,44 @@ public class Database {
                 }
             }
         } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Pedido getProdutosComPreco(List<Produto> produtos){
+        Pedido pedido = new Pedido();
+        List<Produto> listaProdutos = new ArrayList<>();
+        for (Produto p: produtos){
+            listaProdutos.add(getProdutoComPreco(p));
+        }
+        pedido.setId(listaProdutos.size());
+        pedido.setProdutos(listaProdutos);
+        return pedido;
+    }
+
+    private Produto getProdutoComPreco(Produto p){
+        try {
+            Connection cn = this.connect();
+            String query = "SELECT productId, name, category, brand, price, " + p.getQuantity() + " AS quantity , free_shipping, prestige FROM produto WHERE productId = ?";
+
+            PreparedStatement stmt = cn.prepareStatement(query);
+            stmt.setLong(1, p.getProductId());
+            ResultSet rs = stmt.executeQuery(); //executeQuery();
+            Produto newProduto = new Produto(
+                 rs.getLong("productId"),
+                 rs.getString("name"),
+                 rs.getString("category"),
+                 rs.getString("brand"),
+                 rs.getBigDecimal("price"),
+                 rs.getInt("quantity"),
+                 rs.getBoolean("free_shipping"),
+                 rs.getString("prestige")
+            );
+            cn.close();
+            return newProduto;
+
+        } catch (SQLException e){
             e.printStackTrace();
         }
         return null;
