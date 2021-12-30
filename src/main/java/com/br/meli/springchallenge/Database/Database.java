@@ -7,7 +7,9 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class Database {
@@ -29,11 +31,68 @@ public class Database {
     }
 
     public List<Produto> getAllProdutosByCategory(String category) {
-        return queryProduto("select * from produto where category = '" + category + "'");
+        return queryProduto("select * from produto where category = " + category);
     }
 
-    public List<Produto> getAllProdutosId(String ids) {
-        return queryProduto("select * from produto where productId in (" + ids + ")");
+    // resolvendo conflito
+    //public List<Produto> getAllProdutosId(String ids) {
+    //    return queryProduto("select * from produto where productId in (" + ids + ")");
+    // Revisar
+
+    public List<Produto> getAllProdutosByFilters(HashMap<String, String> filters) {
+
+        String sqlQuery = "select * from produto where "; // category = '\" + category + \"'\"";
+
+        for (Map.Entry<String, String> entry : filters.entrySet()) {
+
+            String key = entry.getKey();
+            String value = entry.getValue();
+
+            if (key.equals("price")) {
+                sqlQuery += key + " = " + value + " and ";
+            } else if(key.equals("freeShipping")){
+                int parsedValue = value.equalsIgnoreCase("true") ? 1 : 0;
+                sqlQuery += " free_shipping =  " + parsedValue + " AND ";
+            } else if(!key.equals("order")){
+                sqlQuery += key + " LIKE '" + value + "' and ";
+            }
+        }
+
+        // retira o último and da query
+        StringBuilder sb = new StringBuilder(sqlQuery);
+//        for (int i = 0; i <= 4; i++) {
+//            sb.deleteCharAt(sb.length() - 1);
+//        }
+        sb.delete(sb.length()-5, sb.length()-1);
+
+        String orderBy = " ORDER BY 1";
+
+        if (filters.containsKey("order")) {
+            String orderStr = filters.get("order");
+            int orderNum = Integer.parseInt(orderStr);
+
+            switch (orderNum) {
+                case 0:
+                    orderBy = " ORDER BY name";
+                    break;
+                case 1:
+                    orderBy = " ORDER BY name DESC";
+                    break;
+                case 2:
+                    orderBy = " ORDER BY price DESC";
+                    break;
+                case 3:
+                    orderBy = " ORDER BY price ASC";
+                    break;
+            }
+        }
+        sb.append(orderBy);
+
+        return queryProduto(sb.toString());
+    }
+
+    public List<Produto> getAllProdutos(String category) {
+        return queryProduto("select * from produto where category = " + category);
     }
 
     private List<Produto> queryProduto(String query) {
@@ -71,6 +130,7 @@ public class Database {
                 produtos.add(produto);
             }
 
+            cn.close();
             return produtos;
 
         } catch (SQLException e) {
@@ -90,6 +150,7 @@ public class Database {
             stmt.execute(); //executeQuery();
 
             System.out.println("Query executada com sucesso em customQuery()");
+            cn.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -150,44 +211,42 @@ public class Database {
         return null;
     }
 
-
-    public Pedido getAllProdutosComTotal(List<Produto> produtos) {
+    public Pedido getProdutosComPreco(List<Produto> produtos){
         Pedido pedido = new Pedido();
-        pedido.setId((long) pedidos.size() + 1);
-
-        StringBuilder ids = new StringBuilder();
-        for(Produto p : produtos) {
-            ids.append(p.getProductId()).append(",");
+        List<Produto> listaProdutos = new ArrayList<>();
+        for (Produto p: produtos){
+            listaProdutos.add(getProdutoComPreco(p));
         }
-        ids.deleteCharAt(ids.length()-1);
-
-        List<Produto> produtosA =  getAllProdutosId(ids.toString());
-
-        pedido.setProdutos(produtosA);
-
-        // pegando preços dos produtos do banco de dados
-        List<Double> precos = new ArrayList<>();
-        produtosA.stream().forEach(p -> {
-            precos.add(p.getPrice().doubleValue());
-        });
-
-        // pegando quantidades do payload
-        List<Double> quantidades = new ArrayList<>();
-        produtos.stream().forEach(p -> {
-            quantidades.add(p.getQuantity().doubleValue());
-        });
-
-        double total = 0;
-
-        // multiplicando quantidades e preços
-        for(int i = 0; i < precos.size(); i++) {
-            total += precos.get(i) * quantidades.get(i);
-        }
-
-        pedido.setTotal(total);
-
-        pedidos.add(pedido);
-
+        pedido.setId(listaProdutos.size());
+        pedido.setProdutos(listaProdutos);
         return pedido;
     }
+
+    private Produto getProdutoComPreco(Produto p){
+        try {
+            Connection cn = this.connect();
+            String query = "SELECT productId, name, category, brand, price, " + p.getQuantity() + " AS quantity , free_shipping, prestige FROM produto WHERE productId = ?";
+
+            PreparedStatement stmt = cn.prepareStatement(query);
+            stmt.setLong(1, p.getProductId());
+            ResultSet rs = stmt.executeQuery(); //executeQuery();
+            Produto newProduto = new Produto(
+                 rs.getLong("productId"),
+                 rs.getString("name"),
+                 rs.getString("category"),
+                 rs.getString("brand"),
+                 rs.getBigDecimal("price"),
+                 rs.getInt("quantity"),
+                 rs.getBoolean("free_shipping"),
+                 rs.getString("prestige")
+            );
+            cn.close();
+            return newProduto;
+
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

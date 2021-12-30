@@ -6,6 +6,7 @@ import com.br.meli.springchallenge.Entity.Produto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Repository
@@ -25,7 +26,14 @@ public class ProdutoRepository {
     }
 
     public Pedido criarPedido(List<Produto> produtos) {
-        Pedido pedido = database.getAllProdutosComTotal(produtos);
+        Pedido pedido = database.getProdutosComPreco(produtos);
+        pedido.calculaTotal();
         return pedido;
     }
+
+    public List<Produto> procuraPorFiltros(HashMap<String, String> filtros) {
+        List<Produto> produtos = database.getAllProdutosByFilters(filtros);
+        return produtos;
+    }
+
 }
