@@ -5,7 +5,9 @@ import org.springframework.stereotype.Component;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class Database {
@@ -26,6 +28,54 @@ public class Database {
 
     public List<Produto> getAllProdutosByCategory(String category) {
         return queryProduto("select * from produto where category = '" + category + "'");
+    }
+
+    // Revisar
+    public List<Produto> getAllProdutosByFilters(HashMap<String, String> filters) {
+
+        String sqlQuery = "select * from produto where "; // category = '\" + category + \"'\"";
+
+        for (Map.Entry<String, String> entry : filters.entrySet()) {
+
+            String key = entry.getKey();
+            String value = entry.getValue();
+
+            if (!key.equals("order")) {
+                sqlQuery += key + " LIKE '" + value + "' and ";
+            }
+        }
+
+        // retira o último and da query
+        StringBuilder sb = new StringBuilder(sqlQuery);
+//        for (int i = 0; i <= 4; i++) {
+//            sb.deleteCharAt(sb.length() - 1);
+//        }
+        sb.delete(sb.length()-5, sb.length()-1);
+
+        String orderBy = " ORDER BY 1";
+
+        if (filters.containsKey("order")) {
+            String orderStr = filters.get("order");
+            int orderNum = Integer.parseInt(orderStr);
+
+            switch (orderNum) {
+                case 0:
+                    orderBy = " ORDER BY name";
+                    break;
+                case 1:
+                    orderBy = " ORDER BY name DESC";
+                    break;
+                case 2:
+                    orderBy = " ORDER BY price DESC";
+                    break;
+                case 3:
+                    orderBy = " ORDER BY price ASC";
+                    break;
+            }
+        }
+        sb.append(orderBy);
+
+        return queryProduto(sb.toString());
     }
 
     public List<Produto> getAllProdutos(String category) {
