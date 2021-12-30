@@ -5,6 +5,7 @@ import com.br.meli.springchallenge.Entity.Produto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Repository
@@ -24,4 +25,10 @@ public class ProdutoRepository {
         List<Produto> produtos = database.getAllProdutosByCategory(category);
         return produtos;
     }
+
+    public List<Produto> procuraPorFiltros(HashMap<String, String> filtros) {
+        List<Produto> produtos = database.getAllProdutosByFilters(filtros);
+        return produtos;
+    }
+
 }
