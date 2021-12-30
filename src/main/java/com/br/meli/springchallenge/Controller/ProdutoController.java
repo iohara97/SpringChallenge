@@ -69,9 +69,9 @@ public class ProdutoController {
         }
 
         List<Produto> produtos = produtoService.pesquisaPorFiltros(filtros);
+        if(produtos.size() < 1) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
         return ResponseEntity.status(HttpStatus.OK).body(produtos);
     }
-
-
-
 }
