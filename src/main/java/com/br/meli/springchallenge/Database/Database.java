@@ -163,6 +163,8 @@ public class Database {
 
         List<Produto> produtosA =  getAllProdutosId(ids.toString());
 
+        pedido.setProdutos(produtosA);
+
         // pegando preços dos produtos do banco de dados
         List<Double> precos = new ArrayList<>();
         produtosA.stream().forEach(p -> {
