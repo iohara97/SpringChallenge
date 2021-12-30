@@ -16,7 +16,7 @@ public class ProdutoRepository {
 
 
     public List<Produto> salvar(List<Produto> produtos) {
-        List<Produto> produtosA = database.insertProduto(produtos);
+        List<Produto> produtosA = database.insertProdutoList(produtos);
         return produtosA;
     }
 
