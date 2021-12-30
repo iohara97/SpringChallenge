@@ -1,14 +1,18 @@
 package com.br.meli.springchallenge.Database;
 
+import com.br.meli.springchallenge.Entity.Pedido;
 import com.br.meli.springchallenge.Entity.Produto;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class Database {
+
+    List<Pedido> pedidos = new ArrayList<>();
 
     private Connection connect() {
         try {
@@ -28,8 +32,8 @@ public class Database {
         return queryProduto("select * from produto where category = '" + category + "'");
     }
 
-    public List<Produto> getAllProdutos(String category) {
-        return queryProduto("select * from produto where category = " + category);
+    public List<Produto> getAllProdutosId(String ids) {
+        return queryProduto("select * from produto where productId in (" + ids + ")");
     }
 
     private List<Produto> queryProduto(String query) {
@@ -146,4 +150,42 @@ public class Database {
         return null;
     }
 
+
+    public Pedido getAllProdutosComTotal(List<Produto> produtos) {
+        Pedido pedido = new Pedido();
+        pedido.setId((long) pedidos.size() + 1);
+
+        StringBuilder ids = new StringBuilder();
+        for(Produto p : produtos) {
+            ids.append(p.getProductId()).append(",");
+        }
+        ids.deleteCharAt(ids.length()-1);
+
+        List<Produto> produtosA =  getAllProdutosId(ids.toString());
+
+        // pegando preços dos produtos do banco de dados
+        List<Double> precos = new ArrayList<>();
+        produtosA.stream().forEach(p -> {
+            precos.add(p.getPrice().doubleValue());
+        });
+
+        // pegando quantidades do payload
+        List<Double> quantidades = new ArrayList<>();
+        produtos.stream().forEach(p -> {
+            quantidades.add(p.getQuantity().doubleValue());
+        });
+
+        double total = 0;
+
+        // multiplicando quantidades e preços
+        for(int i = 0; i < precos.size(); i++) {
+            total += precos.get(i) * quantidades.get(i);
+        }
+
+        pedido.setTotal(total);
+
+        pedidos.add(pedido);
+
+        return pedido;
+    }
 }
