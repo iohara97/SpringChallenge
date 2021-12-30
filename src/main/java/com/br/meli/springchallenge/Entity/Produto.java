@@ -22,4 +22,6 @@ public class Produto {
     private Integer quantity;
     private Boolean freeShipping;
     private String prestige;
+
+    private double total;
 }
