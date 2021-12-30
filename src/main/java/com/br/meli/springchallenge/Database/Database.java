@@ -54,7 +54,7 @@ public class Database {
     }
 
     public List<Produto> getAllProdutosByCategory(String category) {
-        return queryProduto("select * from produto where category = " + category);
+        return queryProduto("select * from produto where category = '" + category + "'");
     }
 
     public List<Produto> getAllProdutos(String category) {

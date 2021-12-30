@@ -20,4 +20,8 @@ public class ProdutoRepository {
         return produtosA;
     }
 
+    public List<Produto> procuraCategory(String category) {
+        List<Produto> produtos = database.getAllProdutosByCategory(category);
+        return produtos;
+    }
 }
