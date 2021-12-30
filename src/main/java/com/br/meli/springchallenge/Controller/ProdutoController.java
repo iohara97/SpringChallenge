@@ -4,6 +4,7 @@ import com.br.meli.springchallenge.Entity.Pedido;
 import com.br.meli.springchallenge.Service.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.br.meli.springchallenge.DTO.ProdutoDTO;
@@ -15,8 +16,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.websocket.server.PathParam;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -46,10 +50,25 @@ public class ProdutoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(produtosDTO);
     }
 
-    @RequestMapping(value="articles", method = RequestMethod.GET)
+//    @RequestMapping(value="articles", method = RequestMethod.GET)
+//    @ResponseBody
+//    public ResponseEntity<List<Produto>> getByCategory(@RequestParam("category") String category) {
+//        List<Produto> produtos = produtoService.pesquisaCategory(category);
+//        return ResponseEntity.status(HttpStatus.OK).body(produtos);
+//    }
+
+    @GetMapping("articles")
     @ResponseBody
-    public ResponseEntity<List<Produto>> getByCategory(@RequestParam("category") String category) {
-        List<Produto> produtos = produtoService.pesquisaCategory(category);
+    public ResponseEntity<List<Produto>> getByFilters(@RequestParam MultiValueMap<String, String> requestFilters) {
+        HashMap<String, String> filtros = new HashMap<>();
+
+        for (Map.Entry<String, List<String>> entry : requestFilters.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue().get(0);// concatenar strings
+            filtros.put(key, value);
+        }
+
+        List<Produto> produtos = produtoService.pesquisaPorFiltros(filtros);
         return ResponseEntity.status(HttpStatus.OK).body(produtos);
     }
 
