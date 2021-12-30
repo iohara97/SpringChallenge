@@ -33,6 +33,11 @@ public class ProdutoController {
 
     }*/
 
+    @GetMapping
+    public String okay() {
+        return "okay";
+    }
+
     @PostMapping("/insert-articles-request")
     public ResponseEntity<List<ProdutoDTO>> postProduct(@RequestBody List<Produto> produtos) {
         List<ProdutoDTO> produtosDTO = produtoService.cadastrar(produtos);
