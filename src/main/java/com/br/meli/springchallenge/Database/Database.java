@@ -4,6 +4,7 @@ import com.br.meli.springchallenge.Entity.Pedido;
 import com.br.meli.springchallenge.Entity.Produto;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
@@ -211,7 +212,7 @@ public class Database {
         return null;
     }
 
-    public Pedido getProdutosComPreco(List<Produto> produtos){
+    public Pedido getProdutosComPreco(List<Produto> produtos) throws SQLException {
         Pedido pedido = new Pedido();
         List<Produto> listaProdutos = new ArrayList<>();
         for (Produto p: produtos){
@@ -222,10 +223,10 @@ public class Database {
         return pedido;
     }
 
-    private Produto getProdutoComPreco(Produto p){
-        try {
+    private Produto getProdutoComPreco(Produto p) throws SQLException {
+
             Connection cn = this.connect();
-            String query = "SELECT productId, name, category, brand, price, " + p.getQuantity() + " AS quantity , free_shipping, prestige FROM produto WHERE productId = ?";
+            String query = "SELECT Id, name, category, brand, price, " + p.getQuantity() + " AS quantity , free_shipping, prestige FROM produto WHERE productId = ?";
 
             PreparedStatement stmt = cn.prepareStatement(query);
             stmt.setLong(1, p.getProductId());
@@ -242,11 +243,6 @@ public class Database {
             );
             cn.close();
             return newProduto;
-
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-        return null;
     }
 
 }

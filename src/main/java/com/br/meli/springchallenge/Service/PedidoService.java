@@ -4,6 +4,7 @@ import com.br.meli.springchallenge.DTO.ProdutoDTO;
 import com.br.meli.springchallenge.Entity.Pedido;
 import com.br.meli.springchallenge.Entity.Produto;
 import com.br.meli.springchallenge.Repository.ProdutoRepository;
+import exception.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +22,7 @@ public class PedidoService {
             Pedido pedido = produtoRepository.criarPedido(produtos);
             return pedido;
         } catch(Exception e) {
-            System.out.println("Error = "
-                    + e.getMessage());
+            throw new CustomException("deu treta");
         }
         return null;
     }
