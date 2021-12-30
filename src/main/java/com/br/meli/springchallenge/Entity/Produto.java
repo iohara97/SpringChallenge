@@ -23,5 +23,4 @@ public class Produto {
     private Boolean freeShipping;
     private String prestige;
 
-    private double total;
 }

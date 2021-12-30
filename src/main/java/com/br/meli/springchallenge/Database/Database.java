@@ -1,5 +1,6 @@
 package com.br.meli.springchallenge.Database;
 
+import com.br.meli.springchallenge.Entity.Pedido;
 import com.br.meli.springchallenge.Entity.Produto;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +26,7 @@ public class Database {
     }
 
     public List<Produto> getAllProdutosByCategory(String category) {
-        return queryProduto("select * from produto where category = '" + category + "'");
+        return queryProduto("select * from produto where category = " + category);
     }
 
     public List<Produto> getAllProdutos(String category) {
@@ -141,6 +142,43 @@ public class Database {
                 }
             }
         } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Pedido getProdutosComPreco(List<Produto> produtos){
+        Pedido pedido = new Pedido();
+        List<Produto> listaProdutos = new ArrayList<>();
+        for (Produto p: produtos){
+            listaProdutos.add(getProdutoComPreco(p));
+        }
+        pedido.setId(listaProdutos.size());
+        pedido.setProdutos(listaProdutos);
+        return pedido;
+    }
+
+    private Produto getProdutoComPreco(Produto p){
+        try {
+            Connection cn = this.connect();
+            String query = "SELECT productid, name, category, brand, price, " + p.getQuantity() + ", free_shipping, prestige WHERE productId = ?";
+
+            PreparedStatement stmt = cn.prepareStatement(query);
+            stmt.setLong(1, p.getProductId());
+            ResultSet rs = stmt.executeQuery(); //executeQuery();
+            Produto newProduto = new Produto(
+                 rs.getLong("productId"),
+                 rs.getString("name"),
+                 rs.getString("category"),
+                 rs.getString("brand"),
+                 rs.getBigDecimal("price"),
+                 rs.getInt("quantity"),
+                 rs.getBoolean("free_shipping"),
+                 rs.getString("prestige")
+            );
+            return newProduto;
+
+        } catch (SQLException e){
             e.printStackTrace();
         }
         return null;
