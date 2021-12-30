@@ -48,7 +48,12 @@ public class Database {
             String key = entry.getKey();
             String value = entry.getValue();
 
-            if (!key.equals("order")) {
+            if (key.equals("price")) {
+                sqlQuery += key + " = " + value + " and ";
+            } else if(key.equals("freeShipping")){
+                int parsedValue = value.equalsIgnoreCase("true") ? 1 : 0;
+                sqlQuery += " free_shipping =  " + parsedValue + " AND ";
+            } else if(!key.equals("order")){
                 sqlQuery += key + " LIKE '" + value + "' and ";
             }
         }
@@ -125,6 +130,7 @@ public class Database {
                 produtos.add(produto);
             }
 
+            cn.close();
             return produtos;
 
         } catch (SQLException e) {
@@ -144,6 +150,7 @@ public class Database {
             stmt.execute(); //executeQuery();
 
             System.out.println("Query executada com sucesso em customQuery()");
+            cn.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -233,6 +240,7 @@ public class Database {
                  rs.getBoolean("free_shipping"),
                  rs.getString("prestige")
             );
+            cn.close();
             return newProduto;
 
         } catch (SQLException e){
