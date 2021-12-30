@@ -21,11 +21,19 @@ public class ProdutoService {
         } catch(Exception e) {
             System.out.println("Error = "
                     + e.getMessage());
-            ProdutoDTO produtoDTO = new ProdutoDTO();
-            return (List<ProdutoDTO>) produtoDTO;
         }
+        return null;
     }
 
 
-
+    public List<Produto> pesquisaCategory(String category) {
+        try {
+            List<Produto> produtos = produtoRepository.procuraCategory(category);
+            return produtos;
+        } catch (Exception e) {
+            System.out.println("Error = "
+                    + e.getMessage());
+        }
+        return null;
+    }
 }

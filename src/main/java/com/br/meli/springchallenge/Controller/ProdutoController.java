@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.websocket.server.PathParam;
 import java.net.URI;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -43,4 +44,12 @@ public class ProdutoController {
         List<ProdutoDTO> produtosDTO = produtoService.cadastrar(produtos);
         return ResponseEntity.status(HttpStatus.CREATED).body(produtosDTO);
     }
+
+    @RequestMapping(value="articles", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<List<Produto>> getByCategory(@RequestParam("category") String category) {
+        List<Produto> produtos = produtoService.pesquisaCategory(category);
+        return ResponseEntity.status(HttpStatus.OK).body(produtos);
+    }
+
 }
