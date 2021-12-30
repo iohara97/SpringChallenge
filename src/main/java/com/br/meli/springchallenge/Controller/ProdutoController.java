@@ -1,5 +1,6 @@
 package com.br.meli.springchallenge.Controller;
 import com.br.meli.springchallenge.Database.Database;
+import com.br.meli.springchallenge.Entity.Pedido;
 import com.br.meli.springchallenge.Service.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

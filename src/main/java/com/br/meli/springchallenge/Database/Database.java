@@ -4,12 +4,15 @@ import com.br.meli.springchallenge.Entity.Pedido;
 import com.br.meli.springchallenge.Entity.Produto;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class Database {
+
+    List<Pedido> pedidos = new ArrayList<>();
 
     private Connection connect() {
         try {
@@ -29,8 +32,8 @@ public class Database {
         return queryProduto("select * from produto where category = " + category);
     }
 
-    public List<Produto> getAllProdutos(String category) {
-        return queryProduto("select * from produto where category = " + category);
+    public List<Produto> getAllProdutosId(String ids) {
+        return queryProduto("select * from produto where productId in (" + ids + ")");
     }
 
     private List<Produto> queryProduto(String query) {
