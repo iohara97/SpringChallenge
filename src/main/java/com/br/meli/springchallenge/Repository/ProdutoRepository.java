@@ -25,7 +25,8 @@ public class ProdutoRepository {
     }
 
     public Pedido criarPedido(List<Produto> produtos) {
-        Pedido pedido = database.getAllProdutosComTotal(produtos);
+        Pedido pedido = database.getProdutosComPreco(produtos);
+        pedido.calculaTotal();
         return pedido;
     }
 }

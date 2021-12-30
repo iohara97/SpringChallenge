@@ -164,7 +164,7 @@ public class Database {
     private Produto getProdutoComPreco(Produto p){
         try {
             Connection cn = this.connect();
-            String query = "SELECT productid, name, category, brand, price, " + p.getQuantity() + ", free_shipping, prestige WHERE productId = ?";
+            String query = "SELECT productId, name, category, brand, price, " + p.getQuantity() + " AS quantity , free_shipping, prestige FROM produto WHERE productId = ?";
 
             PreparedStatement stmt = cn.prepareStatement(query);
             stmt.setLong(1, p.getProductId());

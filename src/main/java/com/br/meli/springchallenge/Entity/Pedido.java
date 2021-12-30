@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -14,5 +15,18 @@ import java.util.List;
 public class Pedido {
     private long id;
     private List<Produto> produtos;
-    private double total;
+    private BigDecimal total;
+
+    public void calculaTotal(){
+        BigDecimal tempTotal = BigDecimal.ZERO; // -> valor inicial zero
+        for(Produto p: this.getProdutos()){
+            BigDecimal qtd = new BigDecimal(p.getQuantity());
+            BigDecimal currentValue = p.getPrice();
+
+            currentValue = currentValue.multiply(qtd);
+            tempTotal = tempTotal.add(currentValue);
+
+        }
+        this.setTotal(tempTotal);
+    }
 }
