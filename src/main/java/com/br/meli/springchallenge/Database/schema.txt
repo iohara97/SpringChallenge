@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS produto (
 	category VARCHAR(30) NOT NULL,
 	brand VARCHAR(30) NOT NULL,
 	price DOUBLE NOT NULL,
-	quantity INTEGER NOT NULL,
+	quantity INTEGER NOT NULL CHECK(quantity >= 0),
 	free_shipping BOOLEAN NOT NULL,
 	prestige VARCHAR(10) NOT NULL
 )
@@ -37,7 +37,7 @@ INSERT INTO produto (name, category, brand, price, quantity, free_shipping, pres
 
 INSERT INTO produto (name, category, brand, price, quantity, free_shipping, prestige) VALUES
     ("Soldadora", "Ferramentas", "Black & Decker", 350, 10, True, "***"),
-    ("Chuteira", "Esportes", "Adidas", 235,	6, True, "*****")
+    ("Chuteira", "Esportes", "Adidas", 235,	6, True, "*****"),
     ("Mini Cama elastica", "Esportes", "Starboard", 183, 4, True, "*****"),
     ("Camiseta", "Esportes", "Topper", 80, 2, False, "***"),
     ("Redmi Note 9", "Celulares", "Xiaomi", 2.800, 15, True, "****"),

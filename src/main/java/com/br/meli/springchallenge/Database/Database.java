@@ -3,6 +3,7 @@ package com.br.meli.springchallenge.Database;
 import com.br.meli.springchallenge.Entity.Pedido;
 import com.br.meli.springchallenge.Entity.Produto;
 import org.springframework.stereotype.Component;
+import org.sqlite.SQLiteException;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -18,7 +19,7 @@ public class Database {
 
     private Connection connect() {
         try {
-            Connection connection = DriverManager.getConnection("jdbc:sqlite:desafio1.db");
+            Connection connection = DriverManager.getConnection("jdbc:sqlite:sqlite.db");
             return connection;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -211,37 +212,53 @@ public class Database {
         return null;
     }
 
-    public Pedido getProdutosComPreco(List<Produto> produtos){
+    public Pedido criarPedido(List<Produto> produtos){
         Pedido pedido = new Pedido();
         List<Produto> listaProdutos = new ArrayList<>();
         for (Produto p: produtos){
-            listaProdutos.add(getProdutoComPreco(p));
+            listaProdutos.add(criarPedidoPorProduto(p));
         }
         pedido.setId(listaProdutos.size());
         pedido.setProdutos(listaProdutos);
         return pedido;
     }
 
-    private Produto getProdutoComPreco(Produto p){
+    private Produto criarPedidoPorProduto(Produto p){
         try {
             Connection cn = this.connect();
-            String query = "SELECT productId, name, category, brand, price, " + p.getQuantity() + " AS quantity , free_shipping, prestige FROM produto WHERE productId = ?";
+            //String query = "SELECT productId, name, category, brand, price, " + p.getQuantity() + " AS quantity , free_shipping, prestige FROM produto WHERE productId = ?";
+            String query = "UPDATE produto SET quantity = quantity - ? WHERE productId = ?";
+            try {
+                PreparedStatement stmt = cn.prepareStatement(query);
+                stmt.setLong(1, p.getQuantity());
+                stmt.setLong(2, p.getProductId());
+                int linhasAlteradas = stmt.executeUpdate(); //executeQuery();
 
-            PreparedStatement stmt = cn.prepareStatement(query);
-            stmt.setLong(1, p.getProductId());
-            ResultSet rs = stmt.executeQuery(); //executeQuery();
-            Produto newProduto = new Produto(
-                 rs.getLong("productId"),
-                 rs.getString("name"),
-                 rs.getString("category"),
-                 rs.getString("brand"),
-                 rs.getBigDecimal("price"),
-                 rs.getInt("quantity"),
-                 rs.getBoolean("free_shipping"),
-                 rs.getString("prestige")
-            );
-            cn.close();
-            return newProduto;
+
+                    query = "SELECT * FROM produto WHERE productId = ?";
+                    stmt = cn.prepareStatement(query);
+                    stmt.setLong(1, p.getProductId());
+                    ResultSet rs = stmt.executeQuery();
+
+
+                    Produto newProduto = new Produto(
+                            rs.getLong("productId"),
+                            rs.getString("name"),
+                            rs.getString("category"),
+                            rs.getString("brand"),
+                            rs.getBigDecimal("price"),
+                            rs.getInt("quantity"),
+                            rs.getBoolean("free_shipping"),
+                            rs.getString("prestige")
+                    );
+                    cn.close();
+                    return newProduto;
+                } catch (SQLiteException e){
+                    if(e.getErrorCode() == 19){
+                        return null;
+                    }
+                }
+
 
         } catch (SQLException e){
             e.printStackTrace();

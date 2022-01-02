@@ -15,7 +15,7 @@ public class PedidoRepository {
     Database database;
 
     public Pedido criarPedido(List<Produto> produtos) {
-        Pedido pedido = database.getProdutosComPreco(produtos);
+        Pedido pedido = database.criarPedido(produtos);
         pedido.calculaTotal();
         return pedido;
     }
