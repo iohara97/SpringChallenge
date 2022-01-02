@@ -29,16 +29,6 @@ public class ProdutoController {
     @Autowired
     ProdutoService produtoService;
 
-    /*private static final String template = "Hello, %s!";
-    private final AtomicLong counter = new AtomicLong();
-
-    @GetMapping("/produto")
-    public ResponseEntity<String> greeting() {
-        Database.connect();
-        return ResponseEntity.ok("CONECTOU!");
-
-    }*/
-
     @GetMapping
     public String okay() {
         return "okay";
@@ -49,13 +39,6 @@ public class ProdutoController {
         List<ProdutoDTO> produtosDTO = produtoService.cadastrar(produtos);
         return ResponseEntity.status(HttpStatus.CREATED).body(produtosDTO);
     }
-
-//    @RequestMapping(value="articles", method = RequestMethod.GET)
-//    @ResponseBody
-//    public ResponseEntity<List<Produto>> getByCategory(@RequestParam("category") String category) {
-//        List<Produto> produtos = produtoService.pesquisaCategory(category);
-//        return ResponseEntity.status(HttpStatus.OK).body(produtos);
-//    }
 
     @GetMapping("articles")
     @ResponseBody

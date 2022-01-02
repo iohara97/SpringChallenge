@@ -25,12 +25,6 @@ public class ProdutoRepository {
         return produtos;
     }
 
-    public Pedido criarPedido(List<Produto> produtos) {
-        Pedido pedido = database.getProdutosComPreco(produtos);
-        pedido.calculaTotal();
-        return pedido;
-    }
-
     public List<Produto> procuraPorFiltros(HashMap<String, String> filtros) {
         List<Produto> produtos = database.getAllProdutosByFilters(filtros);
         return produtos;
