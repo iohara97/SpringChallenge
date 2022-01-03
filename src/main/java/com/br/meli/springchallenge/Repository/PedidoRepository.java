@@ -6,6 +6,7 @@ import com.br.meli.springchallenge.Entity.Produto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -20,9 +21,9 @@ public class PedidoRepository {
     /**
      * Método para criar um pedido com uma lista de produto
      * @param produtos
-     * @return pedido com uma lista de produtp exibindo o total
+     * @return pedido com uma lista de produto exibindo o total
      */
-    public Pedido criarPedido(List<Produto> produtos) {
+    public Pedido criarPedido(List<Produto> produtos) throws SQLException {
         Pedido pedido = database.criarPedido(produtos);
         pedido.calculaTotal();
         return pedido;

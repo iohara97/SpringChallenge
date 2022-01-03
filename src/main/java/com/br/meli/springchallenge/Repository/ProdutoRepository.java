@@ -6,6 +6,7 @@ import com.br.meli.springchallenge.Entity.Produto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class ProdutoRepository {
      * @param produtos
      * @return lista de produtos
      */
-    public List<Produto> salvar(List<Produto> produtos) {
+    public List<Produto> salvar(List<Produto> produtos) throws SQLException {
         List<Produto> produtosA = database.insertProdutoList(produtos);
         return produtosA;
     }
@@ -44,7 +45,7 @@ public class ProdutoRepository {
      * @param filtros
      * @return lista de produtos com filtros personalizados
      */
-    public List<Produto> procuraPorFiltros(HashMap<String, String> filtros) {
+    public List<Produto> procuraPorFiltros(HashMap<String, String> filtros) throws SQLException {
         List<Produto> produtos = database.getAllProdutosByFilters(filtros);
         return produtos;
     }
