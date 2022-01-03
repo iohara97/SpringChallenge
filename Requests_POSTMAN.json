@@ -1,0 +1,244 @@
+{
+	"info": {
+		"_postman_id": "4796ab3e-4888-4f12-ba3e-dc94e4aa3f37",
+		"name": "DesafioI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Produtos",
+			"item": [
+				{
+					"name": "Get All Produtos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}articles",
+							"host": [
+								"{{url}}articles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Produtos by Categoria",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}articles?category=roupa",
+							"host": [
+								"{{url}}articles"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "roupa"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Produtos by Categoria +1",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}articles?category=ferramentas&free_shipping=1",
+							"host": [
+								"{{url}}articles"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "ferramentas"
+								},
+								{
+									"key": "free_shipping",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Produto",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"articles\":[\n      {\n         \"productId\":1,\n         \"name\":\"Serra de Bancada\",\n         \"category\":\"Ferramentas\",\n         \"brand\":\"FORTGPRO\",\n         \"price\":1800.00,\n         \"quantity\":5,\n         \"freeShipping\":true,\n         \"prestige\":\"****\"\n      },     \n      {\n         \"productId\":2,\n         \"name\":\"Furadeira\",\n         \"category\":\"Ferramentas\",\n         \"brand\":\"Black & Decker\",\n         \"price\":500.00,\n         \"quantity\":7,\n         \"freeShipping\":true,\n         \"prestige\":\"****\"\n      }\n   ]\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}insert-articles-request",
+							"host": [
+								"{{url}}insert-articles-request"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Compra",
+			"item": [
+				{
+					"name": "Create Pedido Compra",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n    {\n        \"productId\":1,\n        \"name\":\"Serra de Bancada\",\n        \"brand\":\"FORTGPRO\",\n        \"quantity\":5\n    }\n]\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}purchase-request",
+							"host": [
+								"{{url}}purchase-request"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Clientes",
+			"item": [
+				{
+					"name": "PING",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url2}}/ping",
+							"host": [
+								"{{url2}}"
+							],
+							"path": [
+								"ping"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Clientes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url2}}/clientes/",
+							"host": [
+								"{{url2}}"
+							],
+							"path": [
+								"clientes",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Clientes By Estado",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url2}}/clientes/estado?estado=SP",
+							"host": [
+								"{{url2}}"
+							],
+							"path": [
+								"clientes",
+								"estado"
+							],
+							"query": [
+								{
+									"key": "estado",
+									"value": "SP"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Cliente",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nome\":\"Nathan\",\n    \"cidade\": \"São Paulo\",\n    \"estado\": \"SP\",\n    \"endereco\": \"Rua do Nathan, 123\",\n    \"cep\": \"012345-678\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url2}}/clientes/",
+							"host": [
+								"{{url2}}"
+							],
+							"path": [
+								"clientes",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "localhost:8080/api/v1/"
+		},
+		{
+			"key": "url2",
+			"value": "http://localhost:8081/api/v2"
+		}
+	]
+}
