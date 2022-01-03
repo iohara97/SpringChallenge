@@ -1,5 +1,6 @@
 package com.br.meli.springchallenge.Database;
 
+import com.br.meli.exception.CustomException;
 import com.br.meli.springchallenge.Entity.Pedido;
 import com.br.meli.springchallenge.Entity.Produto;
 import org.springframework.stereotype.Component;
@@ -27,12 +28,8 @@ public class Database {
         return null;
     }
 
-    public List<Produto> getAllProdutos() {
+    public List<Produto> getAllProdutos() throws SQLException {
         return queryProduto("select * from produto order by name;");
-    }
-
-    public List<Produto> getAllProdutosByCategory(String category) {
-        return queryProduto("select * from produto where category = " + category);
     }
 
     // resolvendo conflito
@@ -40,7 +37,7 @@ public class Database {
     //    return queryProduto("select * from produto where productId in (" + ids + ")");
     // Revisar
 
-    public List<Produto> getAllProdutosByFilters(HashMap<String, String> filters) {
+    public List<Produto> getAllProdutosByFilters(HashMap<String, String> filters) throws SQLException{
 
         String sqlQuery = "select * from produto where "; // category = '\" + category + \"'\"";
 
@@ -92,55 +89,45 @@ public class Database {
         return queryProduto(sb.toString());
     }
 
-    public List<Produto> getAllProdutos(String category) {
-        return queryProduto("select * from produto where category = " + category);
-    }
+    private List<Produto> queryProduto(String query) throws SQLException{
+        Connection cn = connect();
 
-    private List<Produto> queryProduto(String query) {
-        try {
-            Connection cn = connect();
+        System.out.println("Conexão realizada !!!!");
+        Statement statement = cn.createStatement();
 
-            System.out.println("Conexão realizada !!!!");
-            Statement statement = cn.createStatement();
+        // lendo os registros
+        PreparedStatement stmt = cn.prepareStatement(query);
 
-            // lendo os registros
-            PreparedStatement stmt = cn.prepareStatement(query);
-
-            // tentar implementar a parametrização da query
+        // tentar implementar a parametrização da query
 //            PreparedStatement stmt = cn.prepareStatement("Select * from produtos where produtId = ?");
 //            stmt.setInt(1, 4);
 
-            ResultSet resultSet = stmt.executeQuery();
+        ResultSet resultSet = stmt.executeQuery();
 
-            List<Produto> produtos = new ArrayList<Produto>();
+        List<Produto> produtos = new ArrayList<Produto>();
 
-            while (resultSet.next()) {
-                // Tentando fazer o cast da linha para o objeto Produto
+        while (resultSet.next()) {
+            // Tentando fazer o cast da linha para o objeto Produto
 //                Produto produto = (Produto) resultSet.getRow();
 
-                Produto produto = new Produto(
-                    resultSet.getLong("productId"),
-                    resultSet.getString("name"),
-                    resultSet.getString("category"),
-                    resultSet.getString("brand"),
-                    resultSet.getBigDecimal("price"),
-                    resultSet.getInt("quantity"),
-                    resultSet.getBoolean("free_shipping"),
-                    resultSet.getString("prestige")
-                );
-                produtos.add(produto);
-            }
-
-            cn.close();
-            return produtos;
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            Produto produto = new Produto(
+                resultSet.getLong("productId"),
+                resultSet.getString("name"),
+                resultSet.getString("category"),
+                resultSet.getString("brand"),
+                resultSet.getBigDecimal("price"),
+                resultSet.getInt("quantity"),
+                resultSet.getBoolean("free_shipping"),
+                resultSet.getString("prestige")
+            );
+            produtos.add(produto);
         }
-        return null;
+
+        cn.close();
+        return produtos;
     }
 
-    public void customQuery(String query) {
+    /* public void customQuery(String query) {
         try {
             Connection cn = connect();
 
@@ -155,9 +142,9 @@ public class Database {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-    }
+    } */
 
-    public List<Produto> insertProdutoList(List<Produto> produtos) {
+    public List<Produto> insertProdutoList(List<Produto> produtos) throws SQLException {
             List<Produto> listaProdutosCadastrados = new ArrayList<>();
             for (Produto elem : produtos) {
                 listaProdutosCadastrados.add(insertProdutoSingle(elem));
@@ -165,54 +152,50 @@ public class Database {
             return listaProdutosCadastrados;
     }
 
-    private Produto insertProdutoSingle(Produto produto) {
-        try {
-            Connection cn = connect();
-            String subquery = "INSERT INTO produto (name, category, brand, price, quantity, free_shipping, prestige) VALUES (?, ?, ?, ?, ?, ?, ?) ";
-            PreparedStatement stmt = cn.prepareStatement(subquery, Statement.RETURN_GENERATED_KEYS);
-            stmt.setString(1, produto.getName());
-            stmt.setString(2, produto.getCategory());
-            stmt.setString(3, produto.getBrand());
-            stmt.setBigDecimal(4, produto.getPrice());
-            stmt.setInt(5, produto.getQuantity());
-            stmt.setBoolean(6, produto.getFreeShipping());
-            stmt.setString(7, produto.getPrestige());
+    private Produto insertProdutoSingle(Produto produto) throws SQLException {
+        Connection cn = connect();
+        String subquery = "INSERT INTO produto (name, category, brand, price, quantity, free_shipping, prestige) VALUES (?, ?, ?, ?, ?, ?, ?) ";
+        PreparedStatement stmt = cn.prepareStatement(subquery, Statement.RETURN_GENERATED_KEYS);
+        stmt.setString(1, produto.getName());
+        stmt.setString(2, produto.getCategory());
+        stmt.setString(3, produto.getBrand());
+        stmt.setBigDecimal(4, produto.getPrice());
+        stmt.setInt(5, produto.getQuantity());
+        stmt.setBoolean(6, produto.getFreeShipping());
+        stmt.setString(7, produto.getPrestige());
 
-            int linhasCriadas = stmt.executeUpdate(); //executeQuery();
-            ResultSet keysSet = stmt.getGeneratedKeys();
-            Produto produtoCriado;
-            while (keysSet.next()) {
-                int key = keysSet.getInt(1);
+        int linhasCriadas = stmt.executeUpdate(); //executeQuery();
+        ResultSet keysSet = stmt.getGeneratedKeys();
+        Produto produtoCriado;
+        while (keysSet.next()) {
+            int key = keysSet.getInt(1);
 
-                PreparedStatement getStmt = cn.prepareStatement("Select * from produto where productId = ?");
-                getStmt.setInt(1, key);
-                ResultSet resultSet = getStmt.executeQuery();
+            PreparedStatement getStmt = cn.prepareStatement("Select * from produto where productId = ?");
+            getStmt.setInt(1, key);
+            ResultSet resultSet = getStmt.executeQuery();
 
-                while (resultSet.next()) {
-                    // Tentando fazer o cast da linha para o objeto Produto
-                    //                Produto produto = (Produto) resultSet.getRow();
+            while (resultSet.next()) {
+                // Tentando fazer o cast da linha para o objeto Produto
+                //                Produto produto = (Produto) resultSet.getRow();
 
-                    produtoCriado = new Produto(
-                            resultSet.getLong("productId"),
-                            resultSet.getString("name"),
-                            resultSet.getString("category"),
-                            resultSet.getString("brand"),
-                            resultSet.getBigDecimal("price"),
-                            resultSet.getInt("quantity"),
-                            resultSet.getBoolean("free_shipping"),
-                            resultSet.getString("prestige")
-                    );
-                    cn.close();
-                    return produtoCriado;
-                }
+                produtoCriado = new Produto(
+                        resultSet.getLong("productId"),
+                        resultSet.getString("name"),
+                        resultSet.getString("category"),
+                        resultSet.getString("brand"),
+                        resultSet.getBigDecimal("price"),
+                        resultSet.getInt("quantity"),
+                        resultSet.getBoolean("free_shipping"),
+                        resultSet.getString("prestige")
+                );
+                cn.close();
+                return produtoCriado;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return null;
     }
 
-    public Pedido criarPedido(List<Produto> produtos){
+    public Pedido criarPedido(List<Produto> produtos) {
         Pedido pedido = new Pedido();
         List<Produto> listaProdutos = new ArrayList<>();
         for (Produto p: produtos){
@@ -257,6 +240,7 @@ public class Database {
                     if(e.getErrorCode() == 19){
                         return null;
                     }
+                    throw new CustomException("Erro ao acessar o banco de dados, refaça a solicitação.");
                 }
 
 
