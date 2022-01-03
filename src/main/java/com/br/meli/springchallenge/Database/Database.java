@@ -3,6 +3,7 @@ package com.br.meli.springchallenge.Database;
 import com.br.meli.exception.CustomException;
 import com.br.meli.springchallenge.Entity.Pedido;
 import com.br.meli.springchallenge.Entity.Produto;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import org.sqlite.SQLiteException;
 
@@ -48,7 +49,8 @@ public class Database {
      * @param category
      * @return lista de produtos conforme categoria
      */
-    public List<Produto> getAllProdutosByCategory(String category) {
+    @SneakyThrows
+    public List<Produto> getAllProdutosByCategory(String category)  {
         return queryProduto("select * from produto where category = " + category);
     }
 
