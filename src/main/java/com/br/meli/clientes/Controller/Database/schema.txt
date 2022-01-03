@@ -1,6 +1,0 @@
-CREATE TABLE cliente (
-  	id INTEGER PRIMARY KEY AUTOINCREMENT,
-  	nome VARCHAR(12) NOT NULL,
-  	endereco VARCHAR(120) NOT NULL,
-  	cep LONG(8) NOT NULL
-  );

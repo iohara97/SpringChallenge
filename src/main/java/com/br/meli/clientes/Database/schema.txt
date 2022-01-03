@@ -1,0 +1,8 @@
+CREATE TABLE cliente (
+  	id integer PRIMARY KEY AUTOINCREMENT,
+  	nome TEXT NOT NULL,
+  	cidade TEXT NOT NULL,
+  	estado TEXT NOT NULL,
+  	endereco TEXT NOT NULL,
+  	cep TEXT NOT NULL
+  );
