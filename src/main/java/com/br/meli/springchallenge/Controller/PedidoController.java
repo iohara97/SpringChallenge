@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Essa classe é um intermediador entre a Entity de Pedidos, Produtos e o View
+ */
 @RestController
 @RequestMapping("/api/v1")
 public class PedidoController {
@@ -20,6 +23,11 @@ public class PedidoController {
     @Autowired
     PedidoService pedidoService;
 
+    /**
+     * Método que define o post para cadastrar um pedido, retornando um http Status com código 201.
+     * @param produtos
+     * @return http response com um pedido contendo a lista de produtos
+     */
     @PostMapping("/purchase-request")
     public ResponseEntity<Pedido> postPedido(@RequestBody List<Produto> produtos) {
         Pedido pedido = pedidoService.envia(produtos);

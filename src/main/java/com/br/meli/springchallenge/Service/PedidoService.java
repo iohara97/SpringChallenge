@@ -11,12 +11,21 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Essa classe contém a lógica de negócio da entidade Pedido
+ */
 @Service
 public class PedidoService {
 
     @Autowired
     PedidoRepository pedidoRepository;
 
+    /**
+     * Método que retorna um pedido com a lista de produtos
+     * @exception Exception
+     * @param produtos
+     * @return um pedido com a lista de produtos
+     */
     public Pedido envia(List<Produto> produtos) {
         try {
             Pedido pedido = pedidoRepository.criarPedido(produtos);

@@ -12,11 +12,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Classe onde é feita a conexão direta com o banco de dados
+ */
 @Component
 public class Database {
 
     List<Pedido> pedidos = new ArrayList<>();
 
+    /**
+     * Método para conectar com o banco de dados
+     */
     private Connection connect() {
         try {
             Connection connection = DriverManager.getConnection("jdbc:sqlite:sqlite.db");
@@ -27,10 +33,20 @@ public class Database {
         return null;
     }
 
+    /**
+     * Método com uma query para listar todos os produtos
+     * @return uma lista de produtos ordenada por nome
+     */
     public List<Produto> getAllProdutos() {
         return queryProduto("select * from produto order by name;");
     }
 
+    /**
+     * Método com uma query para listar uma lista de produtos conforme categoria
+     * @deprecated
+     * @param category
+     * @return lista de produtos conforme categoria
+     */
     public List<Produto> getAllProdutosByCategory(String category) {
         return queryProduto("select * from produto where category = " + category);
     }
@@ -40,6 +56,11 @@ public class Database {
     //    return queryProduto("select * from produto where productId in (" + ids + ")");
     // Revisar
 
+    /**
+     * Método para listar produtos com filtros múltiplos
+     * @param filters
+     * @return uma lista de produtos
+     */
     public List<Produto> getAllProdutosByFilters(HashMap<String, String> filters) {
 
         String sqlQuery = "select * from produto where "; // category = '\" + category + \"'\"";
@@ -92,10 +113,12 @@ public class Database {
         return queryProduto(sb.toString());
     }
 
-    public List<Produto> getAllProdutos(String category) {
-        return queryProduto("select * from produto where category = " + category);
-    }
-
+    /**
+     * Método que executa uma query
+     * @param query
+     * @return uma lista de produtos
+     * @exception SQLException
+     */
     private List<Produto> queryProduto(String query) {
         try {
             Connection cn = connect();
@@ -140,6 +163,11 @@ public class Database {
         return null;
     }
 
+    /**
+     * Método que executa uma query de teste
+     * @param query
+     * @exception SQLException
+     */
     public void customQuery(String query) {
         try {
             Connection cn = connect();
@@ -157,6 +185,11 @@ public class Database {
         }
     }
 
+    /**
+     * Método para salvar os produtos de uma lista
+     * @param produtos
+     * @return lista de produtos cadastrados
+     */
     public List<Produto> insertProdutoList(List<Produto> produtos) {
             List<Produto> listaProdutosCadastrados = new ArrayList<>();
             for (Produto elem : produtos) {
@@ -165,6 +198,12 @@ public class Database {
             return listaProdutosCadastrados;
     }
 
+    /**
+     * Método para salvar um produto
+     * @param produto
+     * @return produto
+     * @exception SQLException
+     */
     private Produto insertProdutoSingle(Produto produto) {
         try {
             Connection cn = connect();
@@ -212,6 +251,11 @@ public class Database {
         return null;
     }
 
+    /**
+     * Método para atualizar o banco de dados e devolver um pedido com seus produtos e realizando uma baixa no estoque
+     * @param produtos
+     * @return pedido
+     */
     public Pedido criarPedido(List<Produto> produtos){
         Pedido pedido = new Pedido();
         List<Produto> listaProdutos = new ArrayList<>();
@@ -223,6 +267,12 @@ public class Database {
         return pedido;
     }
 
+    /**
+     * Método para dar baixa no estoque de um produto especifico
+     * @param p
+     * @return produto atualizado
+     * @exception SQLException
+     */
     private Produto criarPedidoPorProduto(Produto p){
         try {
             Connection cn = this.connect();
