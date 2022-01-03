@@ -3,6 +3,7 @@ package com.br.meli.springchallenge.Database;
 import com.br.meli.springchallenge.Entity.Pedido;
 import com.br.meli.springchallenge.Entity.Produto;
 import org.springframework.stereotype.Component;
+import org.sqlite.SQLiteException;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -11,14 +12,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Classe onde é feita a conexão direta com o banco de dados
+ */
 @Component
 public class Database {
 
     List<Pedido> pedidos = new ArrayList<>();
 
+    /**
+     * Método para conectar com o banco de dados
+     */
     private Connection connect() {
         try {
-            Connection connection = DriverManager.getConnection("jdbc:sqlite:desafio1.db");
+            Connection connection = DriverManager.getConnection("jdbc:sqlite:sqlite.db");
             return connection;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -26,10 +33,20 @@ public class Database {
         return null;
     }
 
+    /**
+     * Método com uma query para listar todos os produtos
+     * @return uma lista de produtos ordenada por nome
+     */
     public List<Produto> getAllProdutos() {
         return queryProduto("select * from produto order by name;");
     }
 
+    /**
+     * Método com uma query para listar uma lista de produtos conforme categoria
+     * @deprecated
+     * @param category
+     * @return lista de produtos conforme categoria
+     */
     public List<Produto> getAllProdutosByCategory(String category) {
         return queryProduto("select * from produto where category = " + category);
     }
@@ -39,6 +56,11 @@ public class Database {
     //    return queryProduto("select * from produto where productId in (" + ids + ")");
     // Revisar
 
+    /**
+     * Método para listar produtos com filtros múltiplos
+     * @param filters
+     * @return uma lista de produtos
+     */
     public List<Produto> getAllProdutosByFilters(HashMap<String, String> filters) {
 
         String sqlQuery = "select * from produto where "; // category = '\" + category + \"'\"";
@@ -91,10 +113,12 @@ public class Database {
         return queryProduto(sb.toString());
     }
 
-    public List<Produto> getAllProdutos(String category) {
-        return queryProduto("select * from produto where category = " + category);
-    }
-
+    /**
+     * Método que executa uma query
+     * @param query
+     * @return uma lista de produtos
+     * @exception SQLException
+     */
     private List<Produto> queryProduto(String query) {
         try {
             Connection cn = connect();
@@ -139,6 +163,11 @@ public class Database {
         return null;
     }
 
+    /**
+     * Método que executa uma query de teste
+     * @param query
+     * @exception SQLException
+     */
     public void customQuery(String query) {
         try {
             Connection cn = connect();
@@ -156,6 +185,11 @@ public class Database {
         }
     }
 
+    /**
+     * Método para salvar os produtos de uma lista
+     * @param produtos
+     * @return lista de produtos cadastrados
+     */
     public List<Produto> insertProdutoList(List<Produto> produtos) {
             List<Produto> listaProdutosCadastrados = new ArrayList<>();
             for (Produto elem : produtos) {
@@ -164,6 +198,12 @@ public class Database {
             return listaProdutosCadastrados;
     }
 
+    /**
+     * Método para salvar um produto
+     * @param produto
+     * @return produto
+     * @exception SQLException
+     */
     private Produto insertProdutoSingle(Produto produto) {
         try {
             Connection cn = connect();
@@ -211,37 +251,64 @@ public class Database {
         return null;
     }
 
-    public Pedido getProdutosComPreco(List<Produto> produtos){
+    /**
+     * Método para atualizar o banco de dados e devolver um pedido com seus produtos e realizando uma baixa no estoque
+     * @param produtos
+     * @return pedido
+     */
+    public Pedido criarPedido(List<Produto> produtos){
         Pedido pedido = new Pedido();
         List<Produto> listaProdutos = new ArrayList<>();
         for (Produto p: produtos){
-            listaProdutos.add(getProdutoComPreco(p));
+            listaProdutos.add(criarPedidoPorProduto(p));
         }
         pedido.setId(listaProdutos.size());
         pedido.setProdutos(listaProdutos);
         return pedido;
     }
 
-    private Produto getProdutoComPreco(Produto p){
+    /**
+     * Método para dar baixa no estoque de um produto especifico
+     * @param p
+     * @return produto atualizado
+     * @exception SQLException
+     */
+    private Produto criarPedidoPorProduto(Produto p){
         try {
             Connection cn = this.connect();
-            String query = "SELECT productId, name, category, brand, price, " + p.getQuantity() + " AS quantity , free_shipping, prestige FROM produto WHERE productId = ?";
+            //String query = "SELECT productId, name, category, brand, price, " + p.getQuantity() + " AS quantity , free_shipping, prestige FROM produto WHERE productId = ?";
+            String query = "UPDATE produto SET quantity = quantity - ? WHERE productId = ?";
+            try {
+                PreparedStatement stmt = cn.prepareStatement(query);
+                stmt.setLong(1, p.getQuantity());
+                stmt.setLong(2, p.getProductId());
+                int linhasAlteradas = stmt.executeUpdate(); //executeQuery();
 
-            PreparedStatement stmt = cn.prepareStatement(query);
-            stmt.setLong(1, p.getProductId());
-            ResultSet rs = stmt.executeQuery(); //executeQuery();
-            Produto newProduto = new Produto(
-                 rs.getLong("productId"),
-                 rs.getString("name"),
-                 rs.getString("category"),
-                 rs.getString("brand"),
-                 rs.getBigDecimal("price"),
-                 rs.getInt("quantity"),
-                 rs.getBoolean("free_shipping"),
-                 rs.getString("prestige")
-            );
-            cn.close();
-            return newProduto;
+
+                    query = "SELECT * FROM produto WHERE productId = ?";
+                    stmt = cn.prepareStatement(query);
+                    stmt.setLong(1, p.getProductId());
+                    ResultSet rs = stmt.executeQuery();
+
+
+                    Produto newProduto = new Produto(
+                            rs.getLong("productId"),
+                            rs.getString("name"),
+                            rs.getString("category"),
+                            rs.getString("brand"),
+                            rs.getBigDecimal("price"),
+                            rs.getInt("quantity"),
+                            rs.getBoolean("free_shipping"),
+                            rs.getString("prestige")
+                    );
+                    cn.close();
+                    return newProduto;
+                } catch (SQLiteException e){
+                    if(e.getErrorCode() == 19){
+                        return null;
+                    }
+                }
+
 
         } catch (SQLException e){
             e.printStackTrace();

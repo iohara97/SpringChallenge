@@ -22,6 +22,9 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
+/**
+ * Essa classe é um intermediador entre a Entity de Produto e o View
+ */
 @RestController
 @RequestMapping("/api/v1")
 public class ProdutoController {
@@ -29,34 +32,22 @@ public class ProdutoController {
     @Autowired
     ProdutoService produtoService;
 
-    /*private static final String template = "Hello, %s!";
-    private final AtomicLong counter = new AtomicLong();
-
-    @GetMapping("/produto")
-    public ResponseEntity<String> greeting() {
-        Database.connect();
-        return ResponseEntity.ok("CONECTOU!");
-
-    }*/
-
-    @GetMapping
-    public String okay() {
-        return "okay";
-    }
-
+    /**
+     * Método que define o post para cadastrar um produto, retornando um http Status com código 201.
+     * @param produtos
+     * @return http response com a lista de produtos cadastrados
+     */
     @PostMapping("/insert-articles-request")
     public ResponseEntity<List<ProdutoDTO>> postProduct(@RequestBody List<Produto> produtos) {
         List<ProdutoDTO> produtosDTO = produtoService.cadastrar(produtos);
         return ResponseEntity.status(HttpStatus.CREATED).body(produtosDTO);
     }
 
-//    @RequestMapping(value="articles", method = RequestMethod.GET)
-//    @ResponseBody
-//    public ResponseEntity<List<Produto>> getByCategory(@RequestParam("category") String category) {
-//        List<Produto> produtos = produtoService.pesquisaCategory(category);
-//        return ResponseEntity.status(HttpStatus.OK).body(produtos);
-//    }
-
+    /**
+     * Método que retorna uma lista de produtos com possibilidade de multiplos filtros
+     * @param requestFilters
+     * @return lista de produtos ou status de erro
+     */
     @GetMapping("articles")
     @ResponseBody
     public ResponseEntity<List<Produto>> getByFilters(@RequestParam MultiValueMap<String, String> requestFilters) {
