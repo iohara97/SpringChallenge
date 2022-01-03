@@ -13,12 +13,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Essa classe contém a lógica de negócio da entidade Produto
+ */
 @Service
 public class ProdutoService {
 
     @Autowired
     ProdutoRepository produtoRepository;
 
+    /**
+     * Método para criar uma lista de produtos e armazenar no banco de dados
+     * @exception Exception
+     * @param produtos
+     * @return lista de produtos cadastrados
+     */
     @SneakyThrows
     public List<ProdutoDTO> cadastrar(List<Produto> produtos) {
         try {
@@ -29,8 +38,13 @@ public class ProdutoService {
         }
     }
 
-
-    /* public List<Produto> pesquisaCategory(String category) {
+    /**
+     * Método para listar todos os produtos de uma determinada categoria
+     * @deprecated
+     * @param category
+     * @return lista de produtos de uma categoria
+     */
+    public List<Produto> pesquisaCategory(String category) {
         try {
             List<Produto> produtos = produtoRepository.procuraCategory(category);
             return produtos;
@@ -39,8 +53,14 @@ public class ProdutoService {
                     + e.getMessage());
         }
         return null;
-    } */
+    }
 
+    /**
+     * Método para retornar uma lista de produto referenciada por filtros múltiplos
+     * @exception Exception
+     * @param filtros
+     * @return lista de produtos conforme filtros múltiplos
+     */
     @SneakyThrows
     public List<Produto> pesquisaPorFiltros(HashMap<String, String> filtros) {
         try {

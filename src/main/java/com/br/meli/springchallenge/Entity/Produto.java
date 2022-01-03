@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
+/**
+ * Essa classe contém os atributos da entidade produto
+ */
 @Data
 @Builder
 @AllArgsConstructor

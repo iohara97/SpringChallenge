@@ -1,0 +1,9 @@
+com.br.meli.clientes
+com.br.meli.clientes.Controller
+com.br.meli.springchallenge
+com.br.meli.springchallenge.Controller
+com.br.meli.springchallenge.Database
+com.br.meli.springchallenge.DTO
+com.br.meli.springchallenge.Entity
+com.br.meli.springchallenge.Repository
+com.br.meli.springchallenge.Service

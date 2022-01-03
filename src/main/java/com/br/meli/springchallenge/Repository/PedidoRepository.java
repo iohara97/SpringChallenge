@@ -9,12 +9,20 @@ import org.springframework.stereotype.Repository;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * Classe que irá persistir os dados numa lista de pedido
+ */
 @Repository
 public class PedidoRepository {
 
     @Autowired
     Database database;
 
+    /**
+     * Método para criar um pedido com uma lista de produto
+     * @param produtos
+     * @return pedido com uma lista de produto exibindo o total
+     */
     public Pedido criarPedido(List<Produto> produtos) throws SQLException {
         Pedido pedido = database.criarPedido(produtos);
         pedido.calculaTotal();

@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * Classe com atributos do pedido e lógica para cálculo do total
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,6 +20,9 @@ public class Pedido {
     private List<Produto> produtos;
     private BigDecimal total;
 
+    /**
+     * Método que calcula o total do pedido
+     */
     public void calculaTotal(){
         BigDecimal tempTotal = BigDecimal.ZERO; // -> valor inicial zero
         for(Produto p: this.getProdutos()){

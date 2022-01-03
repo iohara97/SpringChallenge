@@ -11,13 +11,21 @@ import org.springframework.stereotype.Service;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * Essa classe contém a lógica de negócio da entidade Pedido
+ */
 @Service
 public class PedidoService {
 
     @Autowired
     PedidoRepository pedidoRepository;
 
-
+    /**
+     * Método que retorna um pedido com a lista de produtos
+     * @exception SQLException
+     * @param produtos
+     * @return um pedido com a lista de produtos
+     */
     @SneakyThrows
     public Pedido envia(List<Produto> produtos) {
         try {
