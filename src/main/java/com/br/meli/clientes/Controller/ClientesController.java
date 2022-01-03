@@ -16,7 +16,7 @@ public class ClientesController {
     @Autowired
     ClienteService clienteService;
 
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<List<Cliente>> getAllClientes(){
         List<Cliente> clientes = clienteService.getAllClientes();
         if (clientes.size() > 0) {
@@ -25,6 +25,16 @@ public class ClientesController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
+
+    @GetMapping("/estado")
+    public ResponseEntity<List<Cliente>> getAllClientesByEstado(@RequestParam String estado){
+        List<Cliente> clientes = clienteService.getAllClientesByEstado(estado);
+
+        return ResponseEntity.ok(clientes);
+
+    }
+
+
 
     @PostMapping("/")
     public Cliente createClientes(@RequestBody Cliente cliente){

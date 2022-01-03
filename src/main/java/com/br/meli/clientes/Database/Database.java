@@ -87,4 +87,29 @@ public class Database {
         return null;
     }
 
+    public List<Cliente> getAllClientesByState(String estado) {
+        Connection cn = this.connect();
+
+        try{
+            List<Cliente> clientes = new ArrayList<>();
+            PreparedStatement getStmt = cn.prepareStatement("SELECT * FROM cliente WHERE estado LIKE(?)");
+            getStmt.setString(1, estado);
+            ResultSet rs = getStmt.executeQuery();
+            while(rs.next()){
+                Cliente c = new Cliente(
+                        rs.getLong("id"),
+                        rs.getString("nome"),
+                        rs.getString("cidade"),
+                        rs.getString("estado"),
+                        rs.getString("endereco"),
+                        rs.getString("cep")
+                );
+                clientes.add(c);
+            }
+            return clientes;
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

@@ -20,4 +20,8 @@ public class ClienteService {
     public Cliente createCliente(Cliente cliente) {
         return clienteRepository.insertCliente(cliente);
     }
+
+    public List<Cliente> getAllClientesByEstado(String estado) {
+        return clienteRepository.getAllClientesByEstado(estado);
+    }
 }

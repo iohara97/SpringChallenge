@@ -21,4 +21,8 @@ public class ClienteRepository {
     public Cliente insertCliente(Cliente cliente) {
         return database.insertCliente(cliente);
     }
+
+    public List<Cliente> getAllClientesByEstado(String estado) {
+        return database.getAllClientesByState(estado);
+    }
 }
